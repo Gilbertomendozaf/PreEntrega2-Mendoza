@@ -69,8 +69,8 @@ function getPublicIp() {
   })
     .then((response) => response.json())
     .then((data) => {
-      currentCity = data.city;
-      getWeatherData(data.city, currentUnit, hourlyorWeek);
+      currentCity = data.City;
+      getWeatherData(data.City, currentUnit, hourlyorWeek);
     })
     .catch((err) => {
       console.error(err);
@@ -82,7 +82,7 @@ getPublicIp();
 // API
 function getWeatherData(city, unit, hourlyorWeek) {
   fetch(
-    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?unitGroup=metric&key=EJ6UBL2JEQGYB3AA4ENASN62J&contentType=json`,
+    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?unitGroup=metric&key=P95HARJEJ8DWVBXNHWGXPLLTL&contentType=json`,
     {
       method: "GET",
       headers: {},
@@ -119,7 +119,11 @@ function getWeatherData(city, unit, hourlyorWeek) {
       sunSet.innerText = covertTimeTo12HourFormat(today.sunset);
     })
     .catch((err) => {
-      alert("City not found in our database");
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'City not found in our database',
+      })
     });
 }
 
@@ -376,6 +380,32 @@ search.addEventListener("keydown", function (e) {
   }
 });
 
+function addActive(x) {
+  if (!x) return false;
+  removeActive(x);
+  if (currentFocus >= x.length) currentFocus = 0;
+  if (currentFocus < 0) currentFocus = x.length - 1;
+  x[currentFocus].classList.add("active");
+}
+function removeActive(x) {
+
+  for (var i = 0; i < x.length; i++) {
+    x[i].classList.remove("active");
+  }
+}
+
+function removeSuggestions() {
+  var x = document.getElementById("suggestions");
+  if (x) x.parentNode.removeChild(x);
+}
+
+fahrenheitBtn.addEventListener("click", () => {
+  changeUnit("f");
+});
+celciusBtn.addEventListener("click", () => {
+  changeUnit("c");
+});
+
 
 // cambio de unidades
 function changeUnit(unit) {
@@ -417,6 +447,26 @@ function changeTimeSpan(unit) {
   }
 }
 
+//Ciudades para sugerencias
 
+cities = [
+  {
+    country: "ARG",
+    name: "Buenos Aires",
+    lat: "-34.6758",
+    lng: "-58.4673",
+  },
+  {
+    country: "USA",
+    name: "New York",
+    lat: "14.6246",
+    lng: "121.047",
+  },
+  {
+    country: "UY",
+    name: "Montevideo",
+    lat: "-34.8742",
+    lng: "-56.1629",
+  },
 
-
+]

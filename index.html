@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/60607153d5.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Weather Forecast</title>
 </head>
@@ -39,6 +39,15 @@
                         <i class="fas fa-tint"></i>
                         <p id="rain">perc - 0%</p>
                     </div>
+                </div>
+            </div>
+            <div class="history-bar">
+                <p>Last searched</p>
+                <ul class="history-bar__button">
+                    <button class="MostRecent active" onclick="mostRecentOrder()"><i class="fa-solid fa-clock-rotate-left fa-lg"></i></button>
+                    <button class="Alphabet" onclick="alphabeticOrder()"><i class="fa-solid fa-arrow-down-a-z fa-lg"></i></button>
+                </ul>
+                <div class="history-bar__list">
                 </div>
             </div>
             <div class="location">

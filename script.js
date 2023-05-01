@@ -22,11 +22,25 @@ const temp = document.getElementById("temp"),
   tempUnit = document.querySelectorAll(".temp-unit"),
   hourlyBtn = document.querySelector(".hourly"),
   weekBtn = document.querySelector(".week"),
-  weatherCards = document.querySelector("#weather-cards");
-
-let currentCity = "";
-let currentUnit = "c";
-let hourlyorWeek = "week";
+  weatherCards = document.querySelector("#weather-cards"),
+  recents = document.querySelector(".history-bar__list"),
+  mostrecentBtn = document.querySelector(".MostRecent"),
+  alphabetBtn = document.querySelector(".Alphabet");
+  
+  let historyList = []  
+  if (localStorage.getItem('history')){
+    historyList = JSON.parse(localStorage.getItem('history'));
+  } else{
+    localStorage.setItem('history','["ciudad al azar"]');
+    historyList = JSON.parse(localStorage.getItem('history'));
+    let unshiftHistoryList = historyList.pop();
+    localStorage.setItem('history', JSON.stringify(historyList))
+  }
+  document.addEventListener('DOMContentLoaded', historyListOrder())
+  let currentCity = "";
+  let currentUnit = "c";
+  let hourlyorWeek = "week";
+  let recentorAlphabetic = "recent";
 
 // obtener fecha y hora
 function getDateTime() {
@@ -76,8 +90,6 @@ function getPublicIp() {
       console.error(err);
     });
 }
-
-getPublicIp();
 
 // API
 function getWeatherData(city, unit, hourlyorWeek) {
@@ -310,13 +322,48 @@ function updateAirQualityStatus(airquality) {
   }
 }
 
+function historyListOrder(){
+  let htmlToAppend = '<ul>';
+  for (let i = 0; i < historyList.length; i++) {
+    htmlToAppend += `<li id='listItem${i}'>${historyList[i]}</li>`;
+    }
+  htmlToAppend +='</ul>'
+  recents.innerHTML = htmlToAppend;
+}
+
+function deleteCityFromArray(ID){
+
+
+}
+
+function alphabeticOrder(){
+  historyList.sort()
+  historyListOrder()
+}
+
+function mostRecentOrder(){
+  historyList = JSON.parse(localStorage.getItem('history'));
+  historyListOrder()
+}
+function addHistoryList(current){
+  const maximize=current.toLowerCase();
+historyList.unshift(maximize);
+  if(historyList.length>10){
+    const historypop = historyList.pop()
+  } 
+  localStorage.setItem('history', JSON.stringify(historyList))
+}
+
 // search form
 searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
   let location = search.value;
+  addHistoryList(location);
+  localStorage.setItem("lastSearch", location);
   if (location) {
     currentCity = location;
     getWeatherData(location, currentUnit, hourlyorWeek);
+    historyListOrder()
   }
 });
 
@@ -324,7 +371,6 @@ searchForm.addEventListener("submit", (e) => {
 function celciusToFahrenheit(temp) {
   return ((temp * 9) / 5 + 32).toFixed(1);
 }
-
 
 var currentFocus;
 search.addEventListener("input", function (e) {
@@ -446,6 +492,38 @@ function changeTimeSpan(unit) {
     getWeatherData(currentCity, currentUnit, hourlyorWeek);
   }
 }
+
+mostrecentBtn.addEventListener("click", () => {
+  changeListOrder("recent");
+});
+alphabetBtn.addEventListener("click", () => {
+  changeListOrder("alphabetic");
+});
+
+function changeListOrder(unit){
+  if (recentorAlphabetic !== unit){
+    recentorAlphabetic = unit;
+    if (unit === "recent"){
+      mostrecentBtn.classList.add("active");
+      alphabetBtn.classList.remove("active");
+    } else {
+      mostrecentBtn.classList.remove("active");
+      alphabetBtn.classList.add("active");
+    }
+    historyListOrder();
+  }
+}
+
+function lastsession(){
+  const history=localStorage.getItem("lastSearch");
+  if (history){
+    getWeatherData(history, currentUnit, hourlyorWeek);
+  } else {
+  getPublicIp();
+  }
+};
+
+lastsession();
 
 //Ciudades para sugerencias
 
